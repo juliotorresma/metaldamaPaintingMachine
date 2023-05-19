@@ -1,12 +1,21 @@
 #include <ezButton.h>
+// POINTERS
+const int enPinIzq = 4;
+int *ptrEnaPinIzq = &enPinIzq;
+
+///////////////////////////////
+// CONSTANTES
 const int stepPinIzq = 3;
 const int dirPinIzq = 2;
-const int enPinIzq = 4;
+const int velocidadGeneral = 700;
 
+
+/////////////////////////////////////7
 volatile int contador = 0;
 volatile boolean findLimitA = true;
 volatile boolean findLimitB = true;
 volatile boolean findMediumLimit = true;
+
 
 ezButton limitSwitch1(12);  // create ezButton object that attach to pin 7;
 ezButton limitSwitch2(11); 
@@ -26,16 +35,16 @@ void loop() {
   limitSwitch2.loop();
   
   if (findLimitA == true) { // Encontramos limite frontal
-    findLimitA_Function(stepPinIzq, dirPinIzq, 700, HIGH);
+    findLimitA = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH , &ptrEnaPinIzq, limitSwitch1);
   }
   else if (findLimitB == true) { // Encontramos limite trasero
-    findLimitB_Function(stepPinIzq, dirPinIzq, 700, LOW); // setPin, pinDireccion, velocity, direccion
+    findLimitB = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW,  &ptrEnaPinIzq, limitSwitch2); // setPin, pinDireccion, velocity, direccion
     contador++;
   }
   else if (findMediumLimit == true) {
     digitalWrite(enPinIzq, LOW);
     for (int i = 0; i < contador / 2; i++) {
-      moveMotor(stepPinIzq, dirPinIzq, 700, HIGH);
+      moveMotor(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH);
     }
     findMediumLimit = false;
     sprintf(("Se avanzo %3d pasos de %3d/2"),contador/2,contador);
@@ -45,31 +54,19 @@ void loop() {
   }
 }
 
-void findLimitA_Function(int localStepPin, int localDirectionPin, int velocity, int dir) {
-  int state = limitSwitch1.getState();
+boolean findLimit_Function(int localStepPin, int localDirectionPin, int velocity, int dir, int **k_enaPin, ezButton limitSwitchT) {
+  int state = limitSwitchT.getState();
   if (state == HIGH) {
-    digitalWrite(enPinIzq, LOW);
+    digitalWrite(*k_enaPin, LOW);
     moveMotor(localStepPin, localDirectionPin, velocity, dir);
   }
   else {
     Serial.println("The limit switch1: TOUCHED");
-    digitalWrite(enPinIzq, HIGH);
-    findLimitA = false;
+    digitalWrite(*k_enaPin, HIGH);
     delay(1000);
+    return false;
   }
-}
-void findLimitB_Function(int localStepPin, int localDirectionPin, int velocity, int dir) {
-  int state = limitSwitch2.getState();
-  if (state == HIGH) {
-    digitalWrite(enPinIzq, LOW);
-    moveMotor(localStepPin, localDirectionPin, velocity, dir);
-  }
-  else {
-    Serial.println("The limit switch2: TOUCHED");
-    digitalWrite(enPinIzq, HIGH);
-    findLimitB = false;
-    delay(1000);
-  }
+  return true;
 }
 void moveMotor(int localStepPin, int localDirectionPin, int velocity, int dir) { // setPin, pinDireccion, velocity, direccion
   digitalWrite(localDirectionPin, dir);
