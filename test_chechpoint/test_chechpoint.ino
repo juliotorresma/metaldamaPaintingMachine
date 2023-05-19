@@ -3,6 +3,9 @@
 const int enPinIzq = 4;
 int *ptrEnaPinIzq = &enPinIzq;
 
+const int enPinDer = 5;
+int *ptrEnaPinDer = &enPinDer;
+
 ///////////////////////////////
 // CONSTANTES
 const int stepPinIzq = 3;
@@ -12,18 +15,22 @@ const int velocidadGeneral = 700;
 
 /////////////////////////////////////7
 volatile int contador = 0;
-volatile boolean findLimitA = true;
-volatile boolean findLimitB = true;
+volatile boolean findLimitAIzq = true;
+volatile boolean findLimitBIzq = true;
 volatile boolean findMediumLimit = true;
 
 
-ezButton limitSwitch1(12);  // create ezButton object that attach to pin 7;
-ezButton limitSwitch2(11); 
+ezButton limitSwitch1Izq(12);  // create ezButton object that attach to pin 12;
+ezButton limitSwitch2Izq(11); 
+
+ezButton limitSwitch1Der(10);  // create ezButton object that attach to pin 10;
+ezButton limitSwitch2Der(9); 
+
 
 void setup() {
   Serial.begin(9600);
-  limitSwitch1.setDebounceTime(50); // set debounce time to 50 milliseconds
-  limitSwitch2.setDebounceTime(50);
+  limitSwitch1Izq.setDebounceTime(50); // set debounce time to 50 milliseconds
+  limitSwitch2Izq.setDebounceTime(50);
   pinMode(stepPinIzq, OUTPUT);
   pinMode(dirPinIzq, OUTPUT);
   pinMode(enPinIzq, OUTPUT);
@@ -31,14 +38,14 @@ void setup() {
 }
 
 void loop() {
-  limitSwitch1.loop(); // MUST call the loop() function first
-  limitSwitch2.loop();
+  limitSwitch1Izq.loop(); // MUST call the loop() function first
+  limitSwitch2Izq.loop();
   
-  if (findLimitA == true) { // Encontramos limite frontal
-    findLimitA = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH , &ptrEnaPinIzq, limitSwitch1);
+  if (findLimitAIzq== true) { // Encontramos limite frontal
+    findLimitAIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH , &ptrEnaPinIzq, limitSwitch1Izq);
   }
-  else if (findLimitB == true) { // Encontramos limite trasero
-    findLimitB = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW,  &ptrEnaPinIzq, limitSwitch2); // setPin, pinDireccion, velocity, direccion
+  else if (findLimitBIzq == true) { // Encontramos limite trasero
+    findLimitBIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW,  &ptrEnaPinIzq, limitSwitch2Izq); // setPin, pinDireccion, velocity, direccion
     contador++;
   }
   else if (findMediumLimit == true) {
