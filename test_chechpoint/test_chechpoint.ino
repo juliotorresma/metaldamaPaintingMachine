@@ -21,6 +21,10 @@ const int velocidadGeneral = 700;
 volatile int contador = 0;
 volatile boolean findLimitAIzq = true;
 volatile boolean findLimitBIzq = true;
+
+volatile boolean findLimitADer = true;
+volatile boolean findLimitBDer = true;
+
 volatile boolean findMediumLimit = true;
 
 
@@ -28,17 +32,29 @@ ezButton limitSwitch1Izq(12);  // create ezButton object that attach to pin 12;
 ezButton limitSwitch2Izq(11); 
 
 ezButton limitSwitch1Der(10);  // create ezButton object that attach to pin 10;
-ezButton limitSwitch2Der(9); 
+ezButton limitSwitch2Der(9);
 
 
 void setup() {
   Serial.begin(9600);
+  ///////// LIMIT SWITCH BOUNCE TIMES
+  limitSwitch1Der.setDebounceTime(50); // set debounce time to 50 milliseconds
+  limitSwitch2Der.setDebounceTime(50);
+
   limitSwitch1Izq.setDebounceTime(50); // set debounce time to 50 milliseconds
   limitSwitch2Izq.setDebounceTime(50);
+
+  ////////// PIN MODES
   pinMode(stepPinIzq, OUTPUT);
   pinMode(dirPinIzq, OUTPUT);
   pinMode(enPinIzq, OUTPUT);
+
+  pinMode(stepPinDer, OUTPUT);
+  pinMode(dirPinDer, OUTPUT);
+  pinMode(enPinDer, OUTPUT);
+  
   digitalWrite(enPinIzq, LOW);
+  digitalWrite(enPinDer, LOW);
 }
 
 void loop() {
