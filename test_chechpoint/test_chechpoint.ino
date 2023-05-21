@@ -3,13 +3,17 @@
 const int enPinIzq = 4;
 int *ptrEnaPinIzq = &enPinIzq;
 
-const int enPinDer = 5;
+const int enPinDer = 8;
 int *ptrEnaPinDer = &enPinDer;
 
 ///////////////////////////////
 // CONSTANTES
 const int stepPinIzq = 3;
 const int dirPinIzq = 2;
+
+const int stepPinDer = 7;
+const int dirPinDer = 6;
+
 const int velocidadGeneral = 700;
 
 
