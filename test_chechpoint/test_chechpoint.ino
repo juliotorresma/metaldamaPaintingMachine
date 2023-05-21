@@ -14,7 +14,7 @@ const int dirPinIzq = 2;
 const int stepPinDer = 7;
 const int dirPinDer = 6;
 
-const int velocidadGeneral = 700;
+const int velocidadGeneral = 500;
 
 
 /////////////////////////////////////7
@@ -60,25 +60,34 @@ void setup() {
 void loop() {
   limitSwitch1Izq.loop(); // MUST call the loop() function first
   limitSwitch2Izq.loop();
+
+  limitSwitch1Der.loop(); // MUST call the loop() function first
+  limitSwitch2Der.loop();
   
-  if (findLimitAIzq== true) { // Encontramos limite frontal
+  if (findLimitAIzq== true || findLimitADer== true) { // Encontramos limite frontal
     findLimitAIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH , &ptrEnaPinIzq, limitSwitch1Izq);
+    findLimitADer = findLimit_Function(stepPinDer, dirPinDer, velocidadGeneral, LOW , &ptrEnaPinDer, limitSwitch1Der);
   }
-  else if (findLimitBIzq == true) { // Encontramos limite trasero
+  else if (findLimitBIzq == true || findLimitBDer== true) { // Encontramos limite trasero
     findLimitBIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW,  &ptrEnaPinIzq, limitSwitch2Izq); // setPin, pinDireccion, velocity, direccion
+    findLimitBDer = findLimit_Function(stepPinDer, dirPinDer, velocidadGeneral, HIGH,  &ptrEnaPinDer, limitSwitch2Der);
     contador++;
   }
   else if (findMediumLimit == true) {
     digitalWrite(enPinIzq, LOW);
+    digitalWrite(enPinDer, LOW);
     for (int i = 0; i < contador / 2; i++) {
       moveMotor(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH);
+      moveMotor(stepPinDer, dirPinDer, velocidadGeneral, LOW);
     }
     findMediumLimit = false;
     sprintf(("Se avanzo %3d pasos de %3d/2"),contador/2,contador);
   }
   else {
     digitalWrite(enPinIzq, HIGH);
+    digitalWrite(enPinDer, HIGH);
   }
+  
 }
 
 boolean findLimit_Function(int localStepPin, int localDirectionPin, int velocity, int dir, int **k_enaPin, ezButton limitSwitchT) {
@@ -88,9 +97,9 @@ boolean findLimit_Function(int localStepPin, int localDirectionPin, int velocity
     moveMotor(localStepPin, localDirectionPin, velocity, dir);
   }
   else {
-    Serial.println("The limit switch1: TOUCHED");
+    //Serial.println("The limit switch1: TOUCHED");
     digitalWrite(*k_enaPin, HIGH);
-    delay(1000);
+    //delay(1000);
     return false;
   }
   return true;
