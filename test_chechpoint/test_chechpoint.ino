@@ -44,6 +44,12 @@ void setup() {
   limitSwitch1Izq.setDebounceTime(50); // set debounce time to 50 milliseconds
   limitSwitch2Izq.setDebounceTime(50);
 
+  ///// INTERRUPTIONS FOR LIMITS 
+  attachInterrupt(digitalPinToInterrupt(12), limitesAlcanzados, RISING);
+  attachInterrupt(digitalPinToInterrupt(11), limitesAlcanzados, RISING);
+  attachInterrupt(digitalPinToInterrupt(10), limitesAlcanzados, RISING);
+  attachInterrupt(digitalPinToInterrupt(9), limitesAlcanzados, RISING);
+
   ////////// PIN MODES
   pinMode(stepPinIzq, OUTPUT);
   pinMode(dirPinIzq, OUTPUT);
@@ -86,6 +92,7 @@ void loop() {
   else {
     digitalWrite(enPinIzq, HIGH);
     digitalWrite(enPinDer, HIGH);
+
   }
   
 }
@@ -111,4 +118,16 @@ void moveMotor(int localStepPin, int localDirectionPin, int velocity, int dir) {
   digitalWrite(localStepPin, LOW);
   delayMicroseconds(velocity);
   return;
+}
+
+void limitesAlcanzados()
+{
+  if (findLimitAIzq== true || findLimitADer== true || findLimitBIzq == true || findLimitBDer== true){
+    return;
+  }
+  else{ // STOP MOTORS
+    digitalWrite(enPinIzq, HIGH);
+    digitalWrite(enPinDer, HIGH);
+    
+    }
 }
