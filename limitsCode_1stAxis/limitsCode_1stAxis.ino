@@ -14,11 +14,11 @@ const int dirPinIzq = 2;
 const int stepPinDer = 7;
 const int dirPinDer = 6;
 
-const int velocidadGeneral = 3;
+const int velocidadGeneral = 70;
 
 
 /////////////////////////////////////7
-volatile int contador = 0;
+int contador = 0;
 volatile boolean findLimitAIzq = true;
 volatile boolean findLimitBIzq = true;
 
@@ -78,18 +78,20 @@ void loop() {
   else if (findLimitBIzq == true || findLimitBDer == true) { // Encontramos limite trasero
     findLimitBIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, HIGH,  &ptrEnaPinIzq, limitSwitch2Izq); // setPin, pinDireccion, velocity, direccion
     findLimitBDer = findLimit_Function(stepPinDer, dirPinDer, velocidadGeneral, LOW,  &ptrEnaPinDer, limitSwitch2Der);
-    contador++;
+    contador = contador + 1;
+    //Serial.println(contador);
   }
   else if (findMediumLimit == true) {
+    contador = abs(contador);
     digitalWrite(enPinIzq, LOW);
     digitalWrite(enPinDer, LOW);
-    for (int i = 0; i < ((contador) * -1)-7000; i++) {
+    Serial.print(contador);
+    for (int i = 0; i <(contador/2) + 3000; i++) {
       moveMotor(stepPinIzq, dirPinIzq, velocidadGeneral, LOW);
       moveMotor(stepPinDer, dirPinDer, velocidadGeneral, HIGH);
-      delayMicroseconds(80);
     }
     findMediumLimit = false;
-    Serial.println((contador / 2) * -1);
+    
   }
   else {
     digitalWrite(enPinIzq, HIGH);
@@ -106,7 +108,7 @@ boolean findLimit_Function(int localStepPin, int localDirectionPin, int velocity
     moveMotor(localStepPin, localDirectionPin, velocity, dir);
   }
   else {
-    //Serial.println("The limit switch1: TOUCHED");
+    //Serial.println("The limit switch: TOUCHED");
     digitalWrite(*k_enaPin, HIGH);
     //delay(1000);
     return false;
@@ -116,7 +118,6 @@ boolean findLimit_Function(int localStepPin, int localDirectionPin, int velocity
 void moveMotor(int localStepPin, int localDirectionPin, int velocity, int dir) { // setPin, pinDireccion, velocity, direccion
   digitalWrite(localDirectionPin, dir);
   digitalWrite(localStepPin, LOW);
-  delayMicroseconds(velocity);
   digitalWrite(localStepPin, HIGH);
   delayMicroseconds(velocity);
   return;
