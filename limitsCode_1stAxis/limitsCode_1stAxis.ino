@@ -6,6 +6,9 @@ int *ptrEnaPinIzq = &enPinIzq;
 const int enPinDer = 8;
 int *ptrEnaPinDer = &enPinDer;
 
+const int enPinCenter= 35;
+int *ptrEnaPinCenter = &enPinCenter;
+
 ///////////////////////////////
 // CONSTANTES
 const int stepPinIzq = 3;
@@ -13,6 +16,11 @@ const int dirPinIzq = 2;
 
 const int stepPinDer = 7;
 const int dirPinDer = 6;
+
+const int stepPinCenter = 33;
+const int dirPinCenter = 31;
+
+
 
 const int velocidadGeneral = 70;
 
@@ -24,6 +32,9 @@ volatile boolean findLimitBIzq = true;
 
 volatile boolean findLimitADer = true;
 volatile boolean findLimitBDer = true;
+
+volatile boolean findLimitCenterA = true;
+volatile boolean findLimitCenterB = true;
 
 volatile boolean findMediumLimit = true;
 
@@ -70,8 +81,11 @@ void loop() {
 
   limitSwitch1Der.loop(); // MUST call the loop() function first
   limitSwitch2Der.loop();
-
-  if (findLimitAIzq == true || findLimitADer == true) { // Encontramos limite frontal
+  
+  if (findLimitCenterA == true) { // Encontramos limite frontal
+    findLimitCenterA = findLimit_Function(stepPinCenter, dirPinCenter, velocidadGeneral, LOW , &findLimitCenterA, limitSwitch1Izq);
+  }
+  else if (findLimitAIzq == true || findLimitADer == true) { // Encontramos limite frontal
     findLimitAIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW , &ptrEnaPinIzq, limitSwitch1Izq);
     findLimitADer = findLimit_Function(stepPinDer, dirPinDer, velocidadGeneral, HIGH , &ptrEnaPinDer, limitSwitch1Der);
   }
