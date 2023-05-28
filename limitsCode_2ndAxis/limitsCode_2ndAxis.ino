@@ -6,7 +6,7 @@ int *ptrEnaPinIzq = &enPinIzq;
 const int enPinDer = 8;
 int *ptrEnaPinDer = &enPinDer;
 
-const int enPinCenter = 35;
+const int enPinCenter= 35;
 int *ptrEnaPinCenter = &enPinCenter;
 
 ///////////////////////////////
@@ -82,7 +82,10 @@ void loop() {
   limitSwitch1Der.loop(); // MUST call the loop() function first
   limitSwitch2Der.loop();
   
-  if (findLimitAIzq == true || findLimitADer == true) { // Encontramos limite frontal
+  if (findLimitCenterA == true) { // Encontramos limite frontal
+    findLimitCenterA = findLimit_Function(stepPinCenter, dirPinCenter, velocidadGeneral, LOW , &findLimitCenterA, limitSwitch1Izq);
+  }
+  else if (findLimitAIzq == true || findLimitADer == true) { // Encontramos limite frontal
     findLimitAIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW , &ptrEnaPinIzq, limitSwitch1Izq);
     findLimitADer = findLimit_Function(stepPinDer, dirPinDer, velocidadGeneral, HIGH , &ptrEnaPinDer, limitSwitch1Der);
   }
@@ -97,12 +100,12 @@ void loop() {
     digitalWrite(enPinIzq, LOW);
     digitalWrite(enPinDer, LOW);
     Serial.print(contador);
-    for (int i = 0; i < (contador / 2) + 3000; i++) {
+    for (int i = 0; i <(contador/2) + 3000; i++) {
       moveMotor(stepPinIzq, dirPinIzq, velocidadGeneral, LOW);
       moveMotor(stepPinDer, dirPinDer, velocidadGeneral, HIGH);
     }
     findMediumLimit = false;
-
+    
   }
   else {
     digitalWrite(enPinIzq, HIGH);
