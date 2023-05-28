@@ -45,6 +45,8 @@ ezButton limitSwitch2Izq(53);
 ezButton limitSwitch1Der(10);  // create ezButton object that attach to pin 10;
 ezButton limitSwitch2Der(9);
 
+ezButton limitSwitch1Center(39);  // create ezButton object that attach to pin 10;
+ezButton limitSwitch2Center(41);
 
 void setup() {
   Serial.begin(9600);
@@ -54,6 +56,9 @@ void setup() {
 
   limitSwitch1Izq.setDebounceTime(50); // set debounce time to 50 milliseconds
   limitSwitch2Izq.setDebounceTime(50);
+
+  limitSwitch1Center.setDebounceTime(50); // set debounce time to 50 milliseconds
+  limitSwitch2Center.setDebounceTime(50);
 
   ///// INTERRUPTIONS FOR LIMITS
   attachInterrupt(digitalPinToInterrupt(12), limitesAlcanzados, RISING);
@@ -70,9 +75,13 @@ void setup() {
   pinMode(dirPinDer, OUTPUT);
   pinMode(enPinDer, OUTPUT);
 
+  pinMode(stepPinCenter, OUTPUT);
+  pinMode(dirPinCenter, OUTPUT);
+  pinMode(enPinCenter, OUTPUT);
+
   digitalWrite(enPinIzq, LOW);
   digitalWrite(enPinDer, LOW);
-
+  digitalWrite(enPinCenter, LOW);
 }
 
 void loop() {
@@ -81,9 +90,15 @@ void loop() {
 
   limitSwitch1Der.loop(); // MUST call the loop() function first
   limitSwitch2Der.loop();
+
+  limitSwitch1Center.loop(); // MUST call the loop() function first
+  limitSwitch2Center.loop();
   
-  if (findLimitCenterA == true) { // Encontramos limite frontal
-    findLimitCenterA = findLimit_Function(stepPinCenter, dirPinCenter, velocidadGeneral, LOW , &findLimitCenterA, limitSwitch1Izq);
+  if (findLimitCenterA == true) { // Encontramos limite lateral izquierdo
+    findLimitCenterA = findLimit_Function(stepPinCenter, dirPinCenter, velocidadGeneral, HIGH , &ptrEnaPinCenter, limitSwitch1Center);
+  }
+  else if (findLimitCenterB == true) { // Encontramos limite lateral derecho
+    findLimitCenterB = findLimit_Function(stepPinCenter, dirPinCenter, velocidadGeneral, LOW , &ptrEnaPinCenter, limitSwitch2Center);
   }
   else if (findLimitAIzq == true || findLimitADer == true) { // Encontramos limite frontal
     findLimitAIzq = findLimit_Function(stepPinIzq, dirPinIzq, velocidadGeneral, LOW , &ptrEnaPinIzq, limitSwitch1Izq);
